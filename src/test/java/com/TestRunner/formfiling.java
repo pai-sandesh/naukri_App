@@ -3,19 +3,18 @@ package com.TestRunner;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.sun.jndi.toolkit.url.Uri;
 import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.annotations.Test;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -27,23 +26,28 @@ public class formfiling {
 	@Test
 	public void form(Method m) throws IOException, InterruptedException
 	{
+		DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+		capabilities.setCapability("version","");
+		capabilities.setPlatform(Platform.LINUX);
 		String testcaseName = m.getName();
 		WebDriverManager.chromedriver().setup();
-	WebDriver browser = new ChromeDriver();
-	browser.get("https://webdriveruniversity.com/");
-	browser.manage().window().maximize();
+		String remoteUrl = "http://192.168.43.110:4444/wd/hub";
+		RemoteWebDriver browser = new RemoteWebDriver(new URL(remoteUrl),capabilities);
+//	WebDriver browser = new ChromeDriver();
+		browser.get("https://webdriveruniversity.com/");
+		browser.manage().window().maximize();
 	  String parentWindowhandle = browser.getWindowHandle();
-	browser.findElement(By.xpath("//h1[.='BUTTON CLICKS']")).click();
+		browser.findElement(By.xpath("//h1[.='BUTTON CLICKS']")).click();
     Thread.sleep(1000);
    Set<String> windows = browser.getWindowHandles();
   for (String string : windows) {
 	if (!parentWindowhandle.equalsIgnoreCase(string)) {
-	    browser.switchTo().window(string);
+		browser.switchTo().window(string);
 	    Thread.sleep(1000);
-	    browser.findElement(By.xpath("//span[@id='button1']")).click();
+		browser.findElement(By.xpath("//span[@id='button1']")).click();
 	    Thread.sleep(1000);
 	    getScreenShot(browser,testcaseName);
-	    browser.close();
+		browser.close();
 	}
 }
   browser.switchTo().window(parentWindowhandle);
@@ -63,11 +67,11 @@ public class formfiling {
 		browser.close();
 	}
 }
- 
+
  browser.switchTo().window(parentWindowhandle);
  browser.findElement(By.xpath("//h1[.='BUTTON CLICKS']")).click();
  Thread.sleep(1000);
-  
+
   //3rd
          Set<String> w3 = browser.getWindowHandles();
          Iterator<String> itr = w3.iterator();
@@ -82,7 +86,7 @@ public class formfiling {
 				act3.click().build().perform();
 				browser.close();
 			}
-			
+
 		}
          browser.switchTo().window(parentWindowhandle);
 		 browser.quit();
